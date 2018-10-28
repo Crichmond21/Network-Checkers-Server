@@ -69,8 +69,40 @@ public class gameBoard {
 	 * @return true if valid false if not
 	 */
 	private boolean validMove(int initialRow, int initialColumn, int destinationRow, int destinationColumn, boolean king) {
-		//TODO Implement this method
-		return false;
+		//check that variables are in bounds
+		if(initialRow < 0 || initialRow > 7 || initialColumn < 0 || initialColumn > 7 || destinationRow < 0 || destinationRow > 7 || destinationColumn < 0 || destinationColumn > 7) {
+			return false;
+		}
+		
+		//check for game piece in position
+		if(board[initialRow][initialColumn] == null) {
+			return false;
+		}
+		
+		//check for empty space
+		if(board[destinationRow][destinationColumn] != null) {
+			return false;
+		}
+		
+		//check if correctly moving sideways
+		if(Math.abs(destinationRow - initialRow) != 1) {
+			return false;
+		}
+		
+		//check if correctly moving forward/backwards
+		if(king) {
+			if (Math.abs(destinationColumn - initialColumn) != 1) {
+				return false;
+			}
+		}else {
+			if(destinationColumn - initialColumn != 1) {
+				return false;
+			}
+		}
+		
+		//TODO implement jump checking
+		
+		return true;
 	}
 	
 	/**
