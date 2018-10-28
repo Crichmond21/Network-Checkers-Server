@@ -51,6 +51,7 @@ public class gameBoard {
 	 * @param destinationColumn
 	 */
 	public void movePiece(int initialRow, int initialColumn, int destinationRow, int destinationColumn){
+		//TODO: Add Jump functionallity
 		if(validMove(initialRow, initialColumn, destinationRow, destinationColumn, board[initialRow][initialColumn].getKing())) {
 			board[destinationRow][destinationColumn] = board[initialColumn][initialRow];
 			board[initialColumn][initialRow] = null;
@@ -99,10 +100,16 @@ public class gameBoard {
 				return false;
 			}
 		}
-		
-		//TODO implement jump checking
-		
 		return true;
+	}
+	
+	private boolean jumpPosible(String team) {
+		//TODO: Implement this method
+		return false;
+	}
+	
+	public gamePiece[][] getBoard(){
+		return board;
 	}
 	
 	/**
