@@ -44,6 +44,36 @@ public class gameBoard {
 	}
 	
 	/**
+	 * Moves piece from initial position to destination. Throws illegal state exception if not valid move
+	 * @param initialRow
+	 * @param initialColumn
+	 * @param destinationRow
+	 * @param destinationColumn
+	 */
+	public void movePiece(int initialRow, int initialColumn, int destinationRow, int destinationColumn){
+		if(validMove(initialRow, initialColumn, destinationRow, destinationColumn, board[initialRow][initialColumn].getKing())) {
+			board[destinationRow][destinationColumn] = board[initialColumn][initialRow];
+			board[initialColumn][initialRow] = null;
+		}else {
+			throw new IllegalStateException("Invalid Move");
+		}
+	}
+	
+	/**
+	 * returns true if valid move
+	 * @param initialRow
+	 * @param initialColumn
+	 * @param destinationRow
+	 * @param destinationColumn
+	 * @param king
+	 * @return true if valid false if not
+	 */
+	private boolean validMove(int initialRow, int initialColumn, int destinationRow, int destinationColumn, boolean king) {
+		//TODO Implement this method
+		return false;
+	}
+	
+	/**
 	 * class to define game pieces, their king status, and the team they are on
 	 * @author richmondc1
 	 *
