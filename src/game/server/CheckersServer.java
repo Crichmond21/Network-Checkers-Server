@@ -16,7 +16,7 @@ public class CheckersServer {
 
 	public static void main(String[] args) {
 		System.out.println("Starting Server");
-		gameBoard test = new gameBoard();
+		GameBoard test = new GameBoard();
 		
 		//Initiates Sockets and input/output steams outside the try block
 		ServerSocket CheckersServerSocket;
