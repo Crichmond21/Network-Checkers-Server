@@ -1,5 +1,7 @@
 package game.server;
-import java.io.*;
+import java.io.*; 
+import java.text.*; 
+import java.util.*; 
 import java.net.*;
 
 import javafx.scene.Scene;
@@ -44,6 +46,10 @@ public class CheckersServer {
 			serverResponseClient1 = new DataOutputStream(CheckersClient1.getOutputStream());
 			sendStatusCode(serverResponseClient1, 100);
 			
+			Thread t1 = new ClientHandler(CheckersClient1, client1Requests, serverResponseClient1);
+			t1.start();
+			Thread.sleep(100);
+			
 			//Accepts socket for player 2 and creates data input and output streams
 			System.out.println("Wating for connection 2");
 			CheckersClient2 = CheckersServerSocket.accept();
@@ -51,7 +57,13 @@ public class CheckersServer {
 			serverResponseClient2 = new DataOutputStream(CheckersClient2.getOutputStream());
 			sendStatusCode(serverResponseClient2, 100);
 			
-		}catch (IOException e) {
+			Thread t2 = new ClientHandler(CheckersClient2, client2Requests, serverResponseClient2);
+			t2.start();
+			
+			//CheckersServerSocket.close();
+			
+			
+		}catch (Exception e) {
 			//Prints error message followed by exception if exception is caught
 			System.out.println("Error while opening socket on port " + PORT_NUMBER);
 			System.out.println(e);
@@ -61,7 +73,15 @@ public class CheckersServer {
 		System.out.println("Server Running");
 		
 		//MAIN LOOP
-		while(msgin1 != "exit" || msgin2 != "exit") {
+		while(!msgin1.equals("exit") && !msgin2.equals("exit")) {
+			try {
+				
+				
+			}catch(Exception e) {
+
+				e.printStackTrace();
+				System.exit(1);
+			}
 			
 		}
 	}
