@@ -119,6 +119,9 @@ class ClientHandler extends Thread
                    				modifiedPair[2] = moveRow;
                    				modifiedPair[3] = moveColumn;
                    				
+                   				//Check second client handler to modified state
+                   				CheckersServer.setModified(this);
+                   				
                    				//Send code 200
                        			dos.writeInt(200);
                        			dos.flush();

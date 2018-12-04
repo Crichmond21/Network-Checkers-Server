@@ -20,6 +20,14 @@ public class CheckersServer {
 		out.writeInt(code);
 		out.flush();
 	}
+	
+	public static void setModified(ClientHandler t) {
+		if(t.equals(t1)) {
+			t2.setModified(true);
+		}else if(t.equals(t2)) {
+			t1.setModified(true);
+		}
+	}
 
 	public static void main(String[] args) {
 		System.out.println("Starting Server");
