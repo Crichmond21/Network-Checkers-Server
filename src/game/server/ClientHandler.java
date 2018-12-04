@@ -3,21 +3,25 @@ package game.server;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
-import java.text.*;
 
-import game.server.GameBoard.gamePiece;
-
+/**
+ * Client Handler for Network Checkers
+ * 
+ * @author Carter Richmond 
+ *
+ */
 class ClientHandler extends Thread  
 { 
+	//Final variables for datastreams and socket
     final DataInputStream dis; 
     final DataOutputStream dos; 
     final Socket s; 
     
+    //Instance variables for gameboard, team, modified, and modified pair
     private GameBoard game;
     private String team;
     private boolean modified = false;
     private static int[] modifiedPair = new int[4];
-    ClientHandler t2;
       
   
     // Constructor 
@@ -30,11 +34,17 @@ class ClientHandler extends Thread
         this.team = team;
     } 
     
+    /**
+     * If gameboard state changed send the piece changed. 
+     */
     public void sendGameBoard() {
     	//if modified write modified ints to client
     	if(modified) {
     		try {
+    			//Send gameboard changed int 
     			dos.writeInt(210);
+    			
+    			//Send positions of piece to move
     			dos.writeInt(modifiedPair[0]);
     			dos.writeInt(modifiedPair[1]);
     			dos.writeInt(modifiedPair[2]);
@@ -56,17 +66,16 @@ class ClientHandler extends Thread
     	}
     }
     
-    public void setThread(ClientHandler t) {
-    	t2 = t;
-    }
-    
+    /**
+     * Sets modified to state b
+     * @param b state
+     */
     public void setModified(boolean b) {
     	modified = b;
     }
     
     @Override
     public void run() { 
-    	System.out.println("100");
     	String received;
     	
     	//Indexes for piece and destination for moving
@@ -78,30 +87,36 @@ class ClientHandler extends Thread
         while (true) { 
         	
         	try { 
-               	received = dis.readUTF();       
+        		//Get input from client
+               	received = dis.readUTF(); 
+               	//Print out command recieved
+               	System.out.println(received);
              
+               	//switch the string
                	switch(received) {
+               	
+               		//Case selectpiece read the two ints and store them
                		case "selectPiece":
                			initialRow = dis.readInt();
                			initialColumn = dis.readInt();
                			dos.writeInt(200);
                			break;
                		
+               		//Case selectMovementSpot read the two ints and store them, then 
                		case "selectMovementSpot":
                			moveRow = dis.readInt();
                			moveColumn = dis.readInt();
-               			if(moveRow < 0 || moveColumn < 0) {
-               				dos.writeInt(300);
-               				dos.flush();
-               				break;
-               			}
+               			//if(moveRow < 0 || moveColumn < 0) {
+               			//	dos.writeInt(300);
+               			//	dos.flush();
+               			//	break;
+               			//}
                			try {
+               				//if different teams
                				if(team.equals(game.getTeam(initialRow, initialColumn))) {
                					//Attempt to move piece
                    				game.movePiece(initialRow, initialColumn, moveRow, moveColumn);
                    				
-                   				//If no exception caught set modified == true
-                   				//t2.setModified(true);
                    				//Set modified array
                    				modifiedPair[0] = initialRow;
                    				modifiedPair[1] = initialColumn;
@@ -113,11 +128,10 @@ class ClientHandler extends Thread
                        			dos.flush();
                        			break;
                				}else {
+               					//if wrong team send code 300 invalid move
                					dos.writeInt(300);
                					dos.flush();
                				}
-               				Thread.sleep(100);
-                   			//CheckersServer.switchActive(this);
                			}catch(IllegalStateException e) {
                				//If exception send code 300 invalid move
                				e.printStackTrace();
@@ -127,10 +141,12 @@ class ClientHandler extends Thread
                			break;	
                		
                		case "getGameState":
+               			//sends the modified move to the server
                			sendGameBoard();
                			break;
                	}                	
                 	
+               	//if exit then close connection
                	if(received.equals("Exit")) {  
                		System.out.println("Client " + this.s + " sends exit..."); 
                		System.out.println("Closing this connection."); 
@@ -145,6 +161,7 @@ class ClientHandler extends Thread
             }
         } 
           
+        //close input and output steams
         try { 
             // closing resources 
             this.dis.close(); 
