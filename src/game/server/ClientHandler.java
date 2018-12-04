@@ -106,11 +106,7 @@ class ClientHandler extends Thread
                		case "selectMovementSpot":
                			moveRow = dis.readInt();
                			moveColumn = dis.readInt();
-               			//if(moveRow < 0 || moveColumn < 0) {
-               			//	dos.writeInt(300);
-               			//	dos.flush();
-               			//	break;
-               			//}
+
                			try {
                				//if different teams
                				if(team.equals(game.getTeam(initialRow, initialColumn))) {
