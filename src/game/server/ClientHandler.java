@@ -21,6 +21,7 @@ class ClientHandler extends Thread
     private GameBoard game;
     private String team;
     private boolean modified = false;
+    private boolean turn = true;
     private static int[] modifiedPair = new int[4];
       
   
@@ -49,7 +50,6 @@ class ClientHandler extends Thread
     			dos.writeInt(modifiedPair[1]);
     			dos.writeInt(modifiedPair[2]);
     			dos.writeInt(modifiedPair[3]);
-    			dos.flush();
     		}catch(Exception e) {
     			e.printStackTrace();
     		}
@@ -59,7 +59,6 @@ class ClientHandler extends Thread
     		//if not modified send code 200
     		try {
     			dos.writeInt(200);
-    			dos.flush();
     		}catch(Exception e) {
     			e.printStackTrace();
     		}	
@@ -72,6 +71,14 @@ class ClientHandler extends Thread
      */
     public void setModified(boolean b) {
     	modified = b;
+    }
+    
+    /**
+     * Sets turn to state b
+     * @param b state
+     */
+    public void setTurn(boolean b) {
+    	turn = b;
     }
     
     @Override
@@ -89,8 +96,6 @@ class ClientHandler extends Thread
         	try { 
         		//Get input from client
                	received = dis.readUTF(); 
-               	//Print out command recieved
-               	System.out.println(received);
              
                	//switch the string
                	switch(received) {
@@ -106,38 +111,43 @@ class ClientHandler extends Thread
                		case "selectMovementSpot":
                			moveRow = dis.readInt();
                			moveColumn = dis.readInt();
-
-               			try {
-               				//if different teams
-               				if(team.equals(game.getTeam(initialRow, initialColumn))) {
-               					//Attempt to move piece
-                   				game.movePiece(initialRow, initialColumn, moveRow, moveColumn);
-                   				
-                   				//Set modified array
-                   				modifiedPair[0] = initialRow;
-                   				modifiedPair[1] = initialColumn;
-                   				modifiedPair[2] = moveRow;
-                   				modifiedPair[3] = moveColumn;
-                   				
-                   				//Check second client handler to modified state
-                   				CheckersServer.setModified(this);
-                   				
-                   				//Send code 200
-                       			dos.writeInt(200);
+               			
+               			if(turn) {
+               				try {
+                   				//if different teams
+                   				if(initialRow >= 0 && team.equals(game.getTeam(initialRow, initialColumn))) {
+                   					//Attempt to move piece
+                       				game.movePiece(initialRow, initialColumn, moveRow, moveColumn);
+                       				
+                       				//Set modified array
+                       				modifiedPair[0] = initialRow;
+                       				modifiedPair[1] = initialColumn;
+                       				modifiedPair[2] = moveRow;
+                       				modifiedPair[3] = moveColumn;
+                       				
+                       				//Check second client handler to modified state
+                       				CheckersServer.setModified(this);
+                       				
+                       				//Send code 200
+                           			dos.writeInt(200);
+                           			dos.flush();
+                           			break;
+                   				}else {
+                   					//if wrong team send code 300 invalid move
+                   					dos.writeInt(300);
+                   					dos.flush();
+                   				}
+                   			}catch(IllegalStateException e) {
+                   				//If exception send code 300 invalid move
+                   				e.printStackTrace();
+                   				dos.writeInt(300);
                        			dos.flush();
-                       			break;
-               				}else {
-               					//if wrong team send code 300 invalid move
-               					dos.writeInt(300);
-               					dos.flush();
-               				}
-               			}catch(IllegalStateException e) {
-               				//If exception send code 300 invalid move
-               				e.printStackTrace();
+                   			}
+               			}else {
                				dos.writeInt(300);
-                   			dos.flush();
+               				dos.flush();
                			}
-               			break;	
+               			break;
                		
                		case "getGameState":
                			//sends the modified move to the server
@@ -146,7 +156,7 @@ class ClientHandler extends Thread
                	}                	
                 	
                	//if exit then close connection
-               	if(received.equals("Exit")) {  
+               	if(received.equals("exit")) {  
                		System.out.println("Client " + this.s + " sends exit..."); 
                		System.out.println("Closing this connection."); 
                		this.s.close(); 

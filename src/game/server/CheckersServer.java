@@ -24,8 +24,12 @@ public class CheckersServer {
 	public static void setModified(ClientHandler t) {
 		if(t.equals(t1)) {
 			t2.setModified(true);
+			t2.setTurn(true);
+			t1.setTurn(false);
 		}else if(t.equals(t2)) {
 			t1.setModified(true);
+			t1.setTurn(true);
+			t2.setTurn(false);
 		}
 	}
 
@@ -71,6 +75,7 @@ public class CheckersServer {
 			//Creates new Client Handler for Client 2
 			t2 = new ClientHandler(CheckersClient2, client2Requests, serverResponseClient2, game, "blue");
 			t2.start();
+			t2.setTurn(false);
 
 			//Closes the server socket to no longer accept connections
 			CheckersServerSocket.close();
