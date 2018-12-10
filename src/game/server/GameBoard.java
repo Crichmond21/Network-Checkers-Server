@@ -3,6 +3,9 @@ package game.server;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+
+//TODO: Add comments and fix code from decompiler
+
 public class GameBoard {
 	private gamePiece[][] board = new gamePiece[8][8];
 
