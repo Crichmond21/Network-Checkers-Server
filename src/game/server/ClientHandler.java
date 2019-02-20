@@ -33,6 +33,7 @@ class ClientHandler extends Thread
         this.dos = dos; 
         this.game = game;
         this.team = team;
+        System.out.println("Client Handler Started");
     } 
     
     /**
@@ -50,11 +51,22 @@ class ClientHandler extends Thread
     			dos.writeInt(modifiedPair[1]);
     			dos.writeInt(modifiedPair[2]);
     			dos.writeInt(modifiedPair[3]);
+    			
+    			//Wait for incomming data
+    			Thread.sleep(100);
+    			
+    			//If status code isnt good resend data
+    			if(dis.readInt() != 200) {
+    				sendGameBoard();
+    			}
+    			
     		}catch(Exception e) {
     			e.printStackTrace();
     		}
-    		//set modified to false
+    		
+    		//Set modified = false
     		modified = false;
+
     	}else {
     		//if not modified send code 200
     		try {
@@ -137,7 +149,7 @@ class ClientHandler extends Thread
                    					dos.writeInt(300);
                    					dos.flush();
                    				}
-                   			}catch(IllegalStateException e) {
+                   			}catch(Exception e) {
                    				//If exception send code 300 invalid move
                    				e.printStackTrace();
                    				dos.writeInt(300);
@@ -163,6 +175,7 @@ class ClientHandler extends Thread
                     System.out.println("Connection closed"); 
                     break; 
                	} 
+               	
             } catch (SocketException e1) {
             	System.exit(1);
             } catch (Exception e2) { 

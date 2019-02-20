@@ -36,18 +36,18 @@ public class GameBoard {
 	}
 
 	public void movePiece(int initialRow, int initialColumn, int destinationRow, int destinationColumn) {
-		String str;
-
-		int forward = 0;
-
+		String str = board[initialRow][initialColumn].getTeam();
 		
-		//TODO: ADD SWITCH STATEMENT FOR TEAM FORWARD DIR
-		/**
-		 * switch ((str = getTeam(initialRow, initialColumn).toLowerCase()).hashCode())
-		 * {case 112785: if (str.equals("red")) break; break; case 3027034: if
-		 * (!str.equals("blue")) { break label78; forward = -1; break label81; } else {
-		 * forward = 1; } break; } label78: int forward = 0;
-		 */
+		int forward = 0;
+		
+		switch (str){
+		 	case "red": 
+		 		forward = -1;
+		 		break;
+		 	case "blue": 
+		 		forward = 1;
+		 		break;
+		 }
 
 		ArrayList<Integer> jump = jumpPosible(board[initialRow][initialColumn].getTeam().toLowerCase());
 
